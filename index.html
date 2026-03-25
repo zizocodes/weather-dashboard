@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Atmos — Weather Dashboard</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet" />
+</head>
+<body class="light" data-weather="default">
+
+  <!-- BACKGROUND -->
+  <div class="bg-layer" id="bgLayer"></div>
+  <div class="particles" id="particles"></div>
+
+  <div class="app-shell">
+
+    <!-- TOP NAV -->
+    <header class="top-nav">
+      <div class="logo">
+        <div class="logo-orb"></div>
+        <span class="logo-text">Weatherify</span>
+      </div>
+      <div class="nav-center">
+        <span id="clockTime" class="clock-time">--:--</span>
+        <span class="clock-sep">·</span>
+        <span id="clockDate" class="clock-date">Loading…</span>
+      </div>
+      <div class="nav-controls">
+        <button class="btn-icon" id="btnGeo" title="Use my location">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/><circle cx="12" cy="12" r="9" opacity=".2"/></svg>
+        </button>
+        <button class="btn-icon" id="btnTheme" title="Toggle theme">
+          <span class="icon-sun">☀</span>
+          <span class="icon-moon">☾</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- ══════════ LANDING STATE ══════════ -->
+    <section class="landing-hero" id="landingHero">
+
+      <div class="hero-headline">
+        <span class="hero-tag">✦ Real-time Weather Intelligence</span>
+        <h1 class="hero-h1">Know your sky,<br/><em class="hero-em">anywhere on Earth.</em></h1>
+        <p class="hero-sub">Live conditions · 5-day forecasts · Animated trend charts</p>
+      </div>
+
+      <!-- MAIN SEARCH -->
+      <div class="landing-search-wrap">
+        <div class="search-wrap" id="searchWrap">
+          <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" id="searchInput" class="search-input" placeholder="Search any city — Kuwait City, Tokyo, Paris…" autocomplete="off" />
+          <button class="btn-search" id="btnSearch">Search</button>
+        </div>
+        <div class="recent-wrap" id="recentWrap" style="display:none">
+          <span class="recent-label">Recent:</span>
+          <div class="recent-chips" id="recentChips"></div>
+        </div>
+      </div>
+
+      <!-- QUICK CITY PILLS -->
+      <div class="quick-cities">
+        <p class="quick-label">Popular cities</p>
+        <div class="quick-pills">
+          <button class="qpill" data-city="Kuwait City">🇰🇼 Kuwait City</button>
+          <button class="qpill" data-city="Dubai">🇦🇪 Dubai</button>
+          <button class="qpill" data-city="London">🇬🇧 London</button>
+          <button class="qpill" data-city="Tokyo">🇯🇵 Tokyo</button>
+          <button class="qpill" data-city="New York">🇺🇸 New York</button>
+          <button class="qpill" data-city="Paris">🇫🇷 Paris</button>
+          <button class="qpill" data-city="Sydney">🇦🇺 Sydney</button>
+          <button class="qpill" data-city="Mumbai">🇮🇳 Mumbai</button>
+        </div>
+      </div>
+
+      <!-- FEATURE CARDS ROW -->
+      <div class="feature-row">
+        <div class="feat-card">
+          <span class="feat-emoji">🌡️</span>
+          <p class="feat-title">Live Temperature</p>
+          <p class="feat-desc">Real-time °C readings updated every fetch</p>
+        </div>
+        <div class="feat-card">
+          <span class="feat-emoji">📊</span>
+          <p class="feat-title">Trend Charts</p>
+          <p class="feat-desc">Animated 24-hour analysis via Chart.js</p>
+        </div>
+        <div class="feat-card">
+          <span class="feat-emoji">🗓️</span>
+          <p class="feat-title">5-Day Forecast</p>
+          <p class="feat-desc">Plan the week ahead with daily highs/lows</p>
+        </div>
+        <div class="feat-card">
+          <span class="feat-emoji">📍</span>
+          <p class="feat-title">Auto-Location</p>
+          <p class="feat-desc">GPS-based city detection in one tap</p>
+        </div>
+      </div>
+
+      <!-- FLOATING DECO BUBBLES -->
+      <div class="deco-bubbles" aria-hidden="true">
+        <div class="dbubble db1"><span class="db-emoji">☀️</span><span class="db-city">Riyadh</span><span class="db-temp">42°</span></div>
+        <div class="dbubble db2"><span class="db-emoji">🌧️</span><span class="db-city">London</span><span class="db-temp">14°</span></div>
+        <div class="dbubble db3"><span class="db-emoji">❄️</span><span class="db-city">Oslo</span><span class="db-temp">-5°</span></div>
+        <div class="dbubble db4"><span class="db-emoji">⛅</span><span class="db-city">Tokyo</span><span class="db-temp">22°</span></div>
+        <div class="dbubble db5"><span class="db-emoji">🌩️</span><span class="db-city">Mumbai</span><span class="db-temp">31°</span></div>
+        <div class="dbubble db6"><span class="db-emoji">🌫️</span><span class="db-city">Beijing</span><span class="db-temp">18°</span></div>
+      </div>
+
+    </section>
+    <!-- /landing-hero -->
+
+    <!-- LOADER -->
+    <div class="loader-wrap" id="loaderWrap" hidden>
+      <div class="loader">
+        <div class="loader-ring lr1"></div>
+        <div class="loader-ring lr2"></div>
+        <div class="loader-ring lr3"></div>
+        <span class="loader-text">Fetching weather…</span>
+      </div>
+    </div>
+
+    <!-- ERROR -->
+    <div class="error-wrap" id="errorWrap" hidden>
+      <div class="error-card">
+        <span class="error-icon">⚠️</span>
+        <div>
+          <p class="error-msg" id="errorMsg">Something went wrong.</p>
+          <p class="error-hint">Try a specific city name like "Kuwait City" or "Dubai"</p>
+        </div>
+        <button class="error-dismiss" id="errorDismiss">✕</button>
+      </div>
+    </div>
+
+    <!-- ══════════ MAIN WEATHER CONTENT ══════════ -->
+    <main class="main-content" id="mainContent" hidden>
+
+      <!-- COMPACT SEARCH ROW -->
+      <div class="compact-row">
+        <button class="btn-back" id="btnBack">← Back</button>
+        <div class="search-wrap search-wrap--sm">
+          <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" id="searchInputCompact" class="search-input" placeholder="Search another city…" autocomplete="off" />
+          <button class="btn-search btn-search--sm" id="btnSearchCompact">Go</button>
+        </div>
+        <div class="recent-chips-compact" id="recentChipsCompact"></div>
+      </div>
+
+      <!-- HERO WEATHER CARD -->
+      <section class="hero-section">
+        <div class="hero-card glass">
+
+          <div class="hero-left">
+            <div class="city-row">
+              <h1 class="city-name" id="cityName">—</h1>
+              <span class="country-badge" id="countryBadge">—</span>
+            </div>
+            <p class="date-time" id="dateTime">—</p>
+
+            <div class="temp-hero-row">
+              <div class="temp-block">
+                <span class="temp-main" id="tempMain">—</span>
+                <span class="temp-unit">°C</span>
+              </div>
+              <div class="condition-block">
+                <img class="weather-icon-lg" id="weatherIconLg" src="" alt="weather" />
+                <span class="condition-label" id="conditionLabel">—</span>
+                <span class="feels-like" id="feelsLike">Feels like —</span>
+              </div>
+            </div>
+
+            <!-- STAT BAR -->
+            <div class="mini-stat-bar">
+              <div class="mini-stat"><span class="ms-icon">💧</span><span id="humidity" class="ms-val">—</span><span class="ms-lbl">Humidity</span></div>
+              <div class="mini-stat"><span class="ms-icon">💨</span><span id="windSpeed" class="ms-val">—</span><span class="ms-lbl">Wind</span></div>
+              <div class="mini-stat"><span class="ms-icon">📊</span><span id="pressure" class="ms-val">—</span><span class="ms-lbl">Pressure</span></div>
+              <div class="mini-stat"><span class="ms-icon">👁</span><span id="visibility" class="ms-val">—</span><span class="ms-lbl">Visibility</span></div>
+            </div>
+          </div>
+
+          <div class="hero-right">
+            <!-- Humidity gauge -->
+            <div class="gauge-wrap">
+              <svg class="gauge-svg" viewBox="0 0 120 120">
+                <circle class="gauge-track" cx="60" cy="60" r="48" fill="none" stroke-width="9"/>
+                <circle class="gauge-fill" id="humidityGauge" cx="60" cy="60" r="48" fill="none" stroke-width="9"
+                  stroke-dasharray="301.6" stroke-dashoffset="301.6" stroke-linecap="round"
+                  transform="rotate(-90 60 60)"/>
+                <text x="60" y="55" text-anchor="middle" class="gauge-val" id="gaugeVal">—</text>
+                <text x="60" y="70" text-anchor="middle" class="gauge-sub">Humidity</text>
+              </svg>
+            </div>
+
+            <div class="stat-grid">
+              <div class="stat-item"><span class="stat-ico">🌅</span><div><p class="stat-value" id="sunrise">—</p><p class="stat-label">Sunrise</p></div></div>
+              <div class="stat-item"><span class="stat-ico">🌇</span><div><p class="stat-value" id="sunset">—</p><p class="stat-label">Sunset</p></div></div>
+              <div class="stat-item"><span class="stat-ico">🌡️</span><div><p class="stat-value" id="tempMin">—</p><p class="stat-label">Min</p></div></div>
+              <div class="stat-item"><span class="stat-ico">🔥</span><div><p class="stat-value" id="tempMax">—</p><p class="stat-label">Max</p></div></div>
+            </div>
+          </div>
+
+          <div class="hero-deco-icon" id="heroBgIcon">☀️</div>
+        </div>
+      </section>
+
+      <!-- WIDGET ROW -->
+      <section class="section widget-section">
+        <div class="widget-grid">
+
+          <!-- Wind compass -->
+          <div class="widget-card glass">
+            <p class="widget-title">💨 Wind Direction</p>
+            <div class="compass-wrap">
+              <div class="compass-ring">
+                <span class="cn">N</span><span class="ce">E</span><span class="cs">S</span><span class="cw">W</span>
+                <div class="compass-needle-wrap" id="compassNeedleWrap">
+                  <div class="compass-needle-arrow"></div>
+                </div>
+              </div>
+              <p class="compass-val" id="windDegText">—</p>
+            </div>
+          </div>
+
+          <!-- Temp range bar -->
+          <div class="widget-card glass">
+            <p class="widget-title">🌡️ Today's Range</p>
+            <div class="range-wrap">
+              <div class="range-track">
+                <div class="range-fill" id="rangeFill"></div>
+                <div class="range-thumb" id="rangeThumb"></div>
+              </div>
+              <div class="range-labels">
+                <span id="rMin" class="range-cold">—</span>
+                <span class="range-mid">Now</span>
+                <span id="rMax" class="range-hot">—</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Cloud cover ring -->
+          <div class="widget-card glass">
+            <p class="widget-title">☁️ Cloud Cover</p>
+            <div class="ring-wrap">
+              <svg viewBox="0 0 100 100" width="100" height="100">
+                <circle cx="50" cy="50" r="38" fill="none" stroke="var(--border)" stroke-width="9"/>
+                <circle cx="50" cy="50" r="38" fill="none" stroke="var(--accent-2)" stroke-width="9"
+                  stroke-dasharray="238.8" stroke-dashoffset="238.8" id="cloudRing"
+                  stroke-linecap="round" transform="rotate(-90 50 50)"/>
+                <text x="50" y="56" text-anchor="middle" class="ring-val" id="cloudVal">—</text>
+              </svg>
+            </div>
+          </div>
+
+          <!-- Weather score -->
+          <div class="widget-card glass">
+            <p class="widget-title">⭐ Comfort Score</p>
+            <div class="score-wrap">
+              <div class="score-number" id="scoreNum">—</div>
+              <div class="score-bar-track"><div class="score-bar-fill" id="scoreBarFill"></div></div>
+              <p class="score-desc" id="scoreDesc">—</p>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- 5-DAY FORECAST -->
+      <section class="section forecast-section">
+        <div class="section-hdr">
+          <h2 class="section-title">5-Day Forecast</h2>
+          <div class="section-line"></div>
+        </div>
+        <div class="forecast-strip" id="forecastStrip"></div>
+      </section>
+
+      <!-- CHARTS -->
+      <section class="section charts-section">
+        <div class="section-hdr">
+          <h2 class="section-title">24-Hour Trends</h2>
+          <div class="section-line"></div>
+        </div>
+        <div class="charts-grid">
+          <div class="chart-card glass">
+            <div class="chart-hdr"><p class="chart-title">🌡 Temperature</p><span class="chart-badge">°C</span></div>
+            <canvas id="chartTemp"></canvas>
+          </div>
+          <div class="chart-card glass">
+            <div class="chart-hdr"><p class="chart-title">💧 Humidity</p><span class="chart-badge">%</span></div>
+            <canvas id="chartHumidity"></canvas>
+          </div>
+          <div class="chart-card glass">
+            <div class="chart-hdr"><p class="chart-title">💨 Wind Speed</p><span class="chart-badge">km/h</span></div>
+            <canvas id="chartWind"></canvas>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <footer class="footer">
+      <span class="logo-text" style="font-size:13px">Atmos</span>
+      <span class="footer-dot">·</span>
+      <span>Powered by OpenWeatherMap</span>
+      <span class="footer-dot">·</span>
+      <span>Portfolio Project</span>
+    </footer>
+
+  </div><!-- /app-shell -->
+  <script src="script.js"></script>
+</body>
+</html>
